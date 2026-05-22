@@ -1,3 +1,5 @@
+export const revalidate = 0
+
 import { Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
 import Navbar from '@/components/Navbar'
