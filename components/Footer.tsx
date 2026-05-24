@@ -6,11 +6,11 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="text-[#e8e8e8] font-semibold text-sm tracking-wide mb-1">
-              CLASSIC AUTO <span className="text-gold-400">EXPORT</span>
+              GERMAN CLASSICS <span className="text-gold-400">EXPORT</span>
             </div>
             <p className="text-[#555] text-sm mt-3 leading-relaxed">
-              Connecting classic car enthusiasts worldwide with exceptional vehicles
-              and seamless export services.
+              Classic cars sourced and exported from Germany to the world.
+              Every vehicle personally selected, documented and shipped with full transparency.
             </p>
           </div>
 
@@ -24,7 +24,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="mailto:info@classicautoexport.com" className="text-sm text-[#555] hover:text-gold-400 transition-colors">
+                <a href="mailto:germanclassics.export@gmail.com" className="text-sm text-[#555] hover:text-gold-400 transition-colors">
                   Contact Us
                 </a>
               </li>
@@ -36,8 +36,8 @@ export default function Footer() {
             <h3 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-3">Contact</h3>
             <ul className="space-y-2">
               <li className="text-sm text-[#555]">
-                <a href="mailto:info@classicautoexport.com" className="hover:text-gold-400 transition-colors">
-                  info@classicautoexport.com
+                <a href="mailto:germanclassics.export@gmail.com" className="hover:text-gold-400 transition-colors">
+                  germanclassics.export@gmail.com
                 </a>
               </li>
               <li className="text-sm text-[#555]">International buyers welcome</li>
@@ -47,7 +47,7 @@ export default function Footer() {
 
         <div className="divider mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-[#444]">
-            © {new Date().getFullYear()} Classic Auto Export. All rights reserved.
+            © {new Date().getFullYear()} German Classics Export. All rights reserved.
           </p>
           <p className="text-xs text-[#444]">All prices in EUR · Export documentation available</p>
         </div>

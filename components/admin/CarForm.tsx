@@ -29,6 +29,7 @@ export default function CarForm({ car, mode, initialData }: CarFormProps) {
     description: car?.description ?? initialData?.description ?? '',
     destination_countries: car?.destination_countries ?? initialData?.destination_countries ?? [],
     photos: car?.photos ?? initialData?.photos ?? [],
+    source_url: car?.source_url ?? initialData?.source_url ?? null,
   })
 
   const setField = <K extends keyof CarInsert>(key: K, value: CarInsert[K]) => {
@@ -152,6 +153,35 @@ export default function CarForm({ car, mode, initialData }: CarFormProps) {
             </div>
           </div>
         </div>
+
+        {form.source_url && (
+          <div>
+            <label className="label">Source URL</label>
+            <div className="input-field bg-[#0d0d0d] flex items-center gap-2 cursor-default">
+              <a
+                href={form.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gold-400 hover:text-gold-300 text-sm truncate flex-1 transition-colors"
+              >
+                {form.source_url}
+              </a>
+              <svg
+                className="w-3.5 h-3.5 text-[#555] flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Description */}

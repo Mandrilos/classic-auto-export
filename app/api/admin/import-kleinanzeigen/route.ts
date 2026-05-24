@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { parse } from 'node-html-parser'
+import Anthropic from '@anthropic-ai/sdk'
+import { createClient } from '@supabase/supabase-js'
+
+const STORAGE_BUCKET = 'car-photos'
+const MAX_PHOTOS = 12
 
 function isAdminAuthed(req: NextRequest): boolean {
   const session = req.cookies.get('admin_session')?.value
@@ -8,10 +13,77 @@ function isAdminAuthed(req: NextRequest): boolean {
 }
 
 function upgradeImageSize(url: string): string {
-  // eBay/Kleinanzeigen CDN: replace small size suffix with large
   return url
-    .replace(/\$_\d+/, '$_57')       // eBay format: $_12 → $_57 (800px)
-    .replace(/s-l\d+/, 's-l1600')    // eBay/Kleinanzeigen format
+    .replace(/\$_\d+/, '$_57')
+    .replace(/s-l\d+/, 's-l1600')
+}
+
+async function translateToEnglish(text: string): Promise<string> {
+  const apiKey = process.env.ANTHROPIC_API_KEY
+  if (!text || !apiKey) return text
+
+  try {
+    const client = new Anthropic({ apiKey })
+    const msg = await client.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 4096,
+      messages: [
+        {
+          role: 'user',
+          content:
+            'Translate the following German car listing description to English. ' +
+            'Return only the translated text, preserving paragraph breaks. ' +
+            'Do not add any commentary or preamble.\n\n' +
+            text,
+        },
+      ],
+    })
+    const block = msg.content[0]
+    return block.type === 'text' ? block.text.trim() : text
+  } catch {
+    return text
+  }
+}
+
+async function uploadPhotosToSupabase(photoUrls: string[]): Promise<string[]> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!supabaseUrl || !supabaseKey) return []
+
+  const supabase = createClient(supabaseUrl, supabaseKey)
+
+  const results = await Promise.allSettled(
+    photoUrls.slice(0, MAX_PHOTOS).map(async (url) => {
+      const res = await fetch(url, {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+          Referer: 'https://www.kleinanzeigen.de/',
+        },
+        signal: AbortSignal.timeout(12_000),
+      })
+      if (!res.ok) throw new Error(`Photo fetch failed: HTTP ${res.status}`)
+
+      const buffer = await res.arrayBuffer()
+      const contentType = res.headers.get('content-type') || 'image/jpeg'
+      const ext =
+        contentType.split('/')[1]?.split(';')[0]?.replace('jpeg', 'jpg') || 'jpg'
+      const fileName = `cars/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
+
+      const { error } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .upload(fileName, buffer, { contentType, upsert: false })
+
+      if (error) throw error
+
+      const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(fileName)
+      return data.publicUrl
+    })
+  )
+
+  return results
+    .filter((r): r is PromiseFulfilledResult<string> => r.status === 'fulfilled')
+    .map((r) => r.value)
 }
 
 export async function POST(req: NextRequest) {
@@ -42,6 +114,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'URL must be from kleinanzeigen.de' }, { status: 400 })
   }
 
+  // ── Fetch the listing page ─────────────────────────────────────────────────
   let html: string
   try {
     const res = await fetch(url, {
@@ -58,7 +131,9 @@ export async function POST(req: NextRequest) {
 
     if (!res.ok) {
       return NextResponse.json(
-        { error: `Kleinanzeigen returned HTTP ${res.status}. The listing may have been removed or the site blocked the request.` },
+        {
+          error: `Kleinanzeigen returned HTTP ${res.status}. The listing may have been removed or access was blocked.`,
+        },
         { status: 502 }
       )
     }
@@ -71,7 +146,7 @@ export async function POST(req: NextRequest) {
 
   const root = parse(html)
 
-  // ── JSON-LD (most reliable when present) ─────────────────────────────────
+  // ── JSON-LD structured data (most reliable when present) ───────────────────
   let jsonLdTitle = ''
   let jsonLdPrice = 0
   let jsonLdDescription = ''
@@ -89,12 +164,14 @@ export async function POST(req: NextRequest) {
       }
       if (item.image && jsonLdPhotos.length === 0) {
         const imgs = Array.isArray(item.image) ? item.image : [item.image]
-        jsonLdPhotos = imgs.map((img: unknown) =>
-          typeof img === 'string' ? img : (img as { url?: string }).url ?? ''
-        ).filter(Boolean)
+        jsonLdPhotos = imgs
+          .map((img: unknown) =>
+            typeof img === 'string' ? img : (img as { url?: string }).url ?? ''
+          )
+          .filter(Boolean)
       }
     } catch {
-      // ignore malformed JSON-LD
+      // ignore malformed JSON-LD blocks
     }
   }
 
@@ -120,8 +197,8 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // ── Description ────────────────────────────────────────────────────────────
-  const description =
+  // ── Raw German description (will be translated below) ─────────────────────
+  const rawDescription =
     jsonLdDescription ||
     root.querySelector('#viewad-description-text')?.text.trim() ||
     root.querySelector('[data-testid="ad-description"]')?.text.trim() ||
@@ -132,7 +209,6 @@ export async function POST(req: NextRequest) {
   // ── Year ───────────────────────────────────────────────────────────────────
   let year = 0
 
-  // Check structured details section for "Baujahr"
   const detailsSection =
     root.querySelector('#viewad-details') ||
     root.querySelector('[data-testid="ad-detail-attributes"]') ||
@@ -151,33 +227,35 @@ export async function POST(req: NextRequest) {
 
   if (!year) year = new Date().getFullYear()
 
-  // ── Photos ─────────────────────────────────────────────────────────────────
-  let photos: string[] = jsonLdPhotos.map(upgradeImageSize)
+  // ── Raw photo URLs ─────────────────────────────────────────────────────────
+  let rawPhotoUrls: string[] = jsonLdPhotos.map(upgradeImageSize)
 
-  if (photos.length === 0) {
+  if (rawPhotoUrls.length === 0) {
     const seen = new Set<string>()
 
-    // Gallery img elements (try data-src for lazy-loaded images first)
-    const galleryContainerSelectors = [
+    const gallerySelectors = [
       '#viewad-media-gallery',
       '[data-testid="ad-detail-gallery"]',
       '[class*="gallery"]',
       '[class*="adimages"]',
     ]
 
-    for (const containerSel of galleryContainerSelectors) {
-      const container = root.querySelector(containerSel)
+    for (const sel of gallerySelectors) {
+      const container = root.querySelector(sel)
       if (!container) continue
       for (const img of container.querySelectorAll('img')) {
         const src = img.getAttribute('data-src') || img.getAttribute('src') || ''
-        if (src && !src.startsWith('data:') && (src.includes('ebayimg') || src.includes('kleinanzeigen'))) {
+        if (
+          src &&
+          !src.startsWith('data:') &&
+          (src.includes('ebayimg') || src.includes('kleinanzeigen'))
+        ) {
           seen.add(upgradeImageSize(src))
         }
       }
       if (seen.size > 0) break
     }
 
-    // og:image meta tags as final fallback
     if (seen.size === 0) {
       for (const meta of root.querySelectorAll('meta[property="og:image"]')) {
         const content = meta.getAttribute('content')
@@ -185,8 +263,14 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    photos = [...seen].filter(Boolean)
+    rawPhotoUrls = [...seen].filter(Boolean)
   }
 
-  return NextResponse.json({ title, price, year, description, photos })
+  // ── Translate description + upload photos in parallel ─────────────────────
+  const [description, photos] = await Promise.all([
+    translateToEnglish(rawDescription),
+    uploadPhotosToSupabase(rawPhotoUrls),
+  ])
+
+  return NextResponse.json({ title, price, year, description, photos, source_url: url })
 }

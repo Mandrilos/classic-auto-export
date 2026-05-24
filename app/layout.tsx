@@ -2,13 +2,13 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Classic Auto Export — Premium Classic Cars for International Buyers',
+  title: 'German Classics Export — Classic Cars from Germany, Shipped Worldwide',
   description:
-    'Browse our curated collection of classic and vintage automobiles available for export worldwide. Transparent pricing, full documentation, global shipping.',
-  keywords: 'classic cars, vintage cars, car export, collector cars, European classics',
+    'Classic cars sourced and exported from Germany to the world. Every vehicle personally selected, documented and shipped with full transparency.',
+  keywords: 'classic cars, vintage cars, car export Germany, collector cars, German classics, classic car export',
   openGraph: {
-    title: 'Classic Auto Export',
-    description: 'Premium classic cars for international buyers',
+    title: 'German Classics Export',
+    description: 'Classic cars sourced and exported from Germany to the world.',
     type: 'website',
   },
 }

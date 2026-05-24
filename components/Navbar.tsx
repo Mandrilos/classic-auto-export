@@ -18,8 +18,11 @@ export default function Navbar() {
               </svg>
             </div>
             <div>
-              <span className="text-[#e8e8e8] font-semibold text-sm tracking-wide">CLASSIC AUTO</span>
-              <span className="text-gold-400 font-semibold text-sm tracking-wide"> EXPORT</span>
+              <div>
+                <span className="text-[#e8e8e8] font-semibold text-sm tracking-wide">GERMAN CLASSICS</span>
+                <span className="text-gold-400 font-semibold text-sm tracking-wide"> EXPORT</span>
+              </div>
+              <p className="text-[#444] text-[10px] tracking-widest uppercase leading-none">From Germany · Worldwide</p>
             </div>
           </Link>
 
@@ -28,7 +31,7 @@ export default function Navbar() {
             <Link href="/" className="text-sm text-[#888] hover:text-[#e8e8e8] transition-colors">
               Catalog
             </Link>
-            <a href="mailto:info@classicautoexport.com" className="text-sm text-[#888] hover:text-[#e8e8e8] transition-colors">
+            <a href="mailto:germanclassics.export@gmail.com" className="text-sm text-[#888] hover:text-[#e8e8e8] transition-colors">
               Contact
             </a>
           </nav>
@@ -62,7 +65,7 @@ export default function Navbar() {
               Catalog
             </Link>
             <a
-              href="mailto:info@classicautoexport.com"
+              href="mailto:germanclassics.export@gmail.com"
               className="block px-2 py-2 text-sm text-[#888] hover:text-[#e8e8e8]"
               onClick={() => setMenuOpen(false)}
             >

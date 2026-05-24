@@ -11,6 +11,7 @@ interface ImportedData {
   year: number
   description: string
   photos: string[]
+  source_url: string
 }
 
 export default function NewCarPage() {
@@ -25,7 +26,7 @@ export default function NewCarPage() {
         sessionStorage.removeItem('kleinanzeigen_import')
       }
     } catch {
-      // sessionStorage unavailable or JSON parse error
+      // sessionStorage unavailable or malformed JSON
     }
     setReady(true)
   }, [])
@@ -36,6 +37,8 @@ export default function NewCarPage() {
         price: imported.price,
         year: imported.year,
         description: imported.description,
+        photos: imported.photos,
+        source_url: imported.source_url,
       }
     : undefined
 
@@ -54,7 +57,7 @@ export default function NewCarPage() {
         <h1 className="text-2xl font-bold text-[#e8e8e8]">Add New Car</h1>
         <p className="text-[#555] text-sm mt-1">
           {imported
-            ? 'Pre-filled from Kleinanzeigen — review all fields and upload photos before publishing'
+            ? 'Pre-filled from Kleinanzeigen — review all fields before publishing'
             : 'Create a new listing for the public catalog'}
         </p>
       </div>
@@ -65,44 +68,7 @@ export default function NewCarPage() {
         </div>
       )}
 
-      {ready && (
-        <>
-          {/* Scraped photos reference panel */}
-          {imported && imported.photos.length > 0 && (
-            <div className="card p-5 mb-6 bg-[#0d0d0d]">
-              <p className="text-xs font-semibold text-[#666] uppercase tracking-wider mb-1">
-                Photos from Kleinanzeigen
-              </p>
-              <p className="text-xs text-[#444] mb-3">
-                Click to open full-size, then save and upload via the Photos section below.
-              </p>
-              <div className="flex gap-2 overflow-x-auto pb-1">
-                {imported.photos.map((src, i) => (
-                  <a
-                    key={i}
-                    href={src}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-shrink-0"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={src}
-                      alt={`Scraped photo ${i + 1}`}
-                      className="w-28 h-20 object-cover rounded border border-[#2a2a2a] hover:border-gold-500/60 transition-colors"
-                      onError={(e) => {
-                        ;(e.currentTarget as HTMLImageElement).style.display = 'none'
-                      }}
-                    />
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <CarForm mode="create" initialData={initialData} />
-        </>
-      )}
+      {ready && <CarForm mode="create" initialData={initialData} />}
     </div>
   )
 }

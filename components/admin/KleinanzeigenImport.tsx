@@ -9,6 +9,7 @@ interface ScrapedData {
   year: number
   description: string
   photos: string[]
+  source_url: string
 }
 
 export default function KleinanzeigenImport() {
@@ -74,7 +75,7 @@ export default function KleinanzeigenImport() {
           {loading ? (
             <>
               <div className="w-4 h-4 border-2 border-[#666] border-t-transparent rounded-full animate-spin" />
-              Fetching…
+              Importing…
             </>
           ) : (
             'Import'
@@ -117,7 +118,7 @@ export default function KleinanzeigenImport() {
           {data.photos.length > 0 ? (
             <div>
               <p className="text-xs text-[#555] mb-2">
-                {data.photos.length} photo{data.photos.length !== 1 ? 's' : ''} found
+                {data.photos.length} photo{data.photos.length !== 1 ? 's' : ''} uploaded to Supabase
               </p>
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {data.photos.map((src, i) => (
@@ -137,6 +138,7 @@ export default function KleinanzeigenImport() {
           ) : (
             <p className="text-xs text-[#555]">No photos found — you can upload them manually in the form.</p>
           )}
+
 
           <button onClick={handleCreateListing} className="btn-gold">
             Create Listing from Import →

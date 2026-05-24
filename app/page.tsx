@@ -67,16 +67,16 @@ export default async function CatalogPage({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
           <div className="max-w-2xl">
             <p className="text-gold-400 text-xs font-semibold uppercase tracking-widest mb-3">
-              Premium Classic Vehicle Export
+              Classic Car Export · From Germany
             </p>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#e8e8e8] leading-tight mb-4">
-              Exceptional Classic Cars{' '}
+              Classic Cars from Germany,{' '}
               <br className="hidden sm:block" />
-              <span className="text-gold-400">for Discerning Buyers</span>
+              <span className="text-gold-400">Shipped Worldwide</span>
             </h1>
             <p className="text-[#666] text-base sm:text-lg leading-relaxed">
-              We source, authenticate, and export rare classic automobiles worldwide.
-              Full documentation, transparent history, professional shipping.
+              Classic cars sourced and exported from Germany to the world.
+              Every vehicle personally selected, documented and shipped with full transparency.
             </p>
           </div>
         </div>

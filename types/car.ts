@@ -8,6 +8,7 @@ export interface Car {
   description: string
   destination_countries: string[]
   photos: string[]
+  source_url: string | null
   created_at: string
   updated_at: string
 }
@@ -16,12 +17,17 @@ export type CarInsert = Omit<Car, 'id' | 'created_at' | 'updated_at'>
 export type CarUpdate = Partial<CarInsert>
 
 export const DESTINATION_COUNTRIES = [
+  'Argentina',
   'Australia',
   'Austria',
   'Belgium',
+  'Bolivia',
   'Brazil',
   'Canada',
+  'Chile',
+  'Colombia',
   'Denmark',
+  'Ecuador',
   'Finland',
   'France',
   'Germany',
@@ -30,6 +36,8 @@ export const DESTINATION_COUNTRIES = [
   'Kuwait',
   'Netherlands',
   'Norway',
+  'Paraguay',
+  'Peru',
   'Poland',
   'Portugal',
   'Qatar',
@@ -41,6 +49,8 @@ export const DESTINATION_COUNTRIES = [
   'UAE',
   'United Kingdom',
   'United States',
+  'Uruguay',
+  'Venezuela',
 ]
 
 export const CAR_BRANDS = [
