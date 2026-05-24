@@ -88,10 +88,35 @@ const GERMAN_LABEL_MAP: Record<string, string> = {
   'material innenausstattung': 'interior_material',
 }
 
-// Spec fields whose German values should be translated to English by Claude
+// Spec fields whose German values should be translated to English
 const TRANSLATABLE_SPEC_FIELDS = new Set([
   'condition', 'fuel_type', 'transmission', 'body_type', 'exterior_color', 'interior_material',
 ])
+
+// Static lookup for common German automotive values — avoids API calls for known terms
+const GERMAN_VALUE_MAP: Record<string, string> = {
+  'benzin': 'Petrol',
+  'diesel': 'Diesel',
+  'elektro': 'Electric',
+  'hybrid': 'Hybrid',
+  'manuell': 'Manual',
+  'automatik': 'Automatic',
+  'limousine': 'Saloon',
+  'kombi': 'Estate',
+  'coupé': 'Coupé',
+  'cabrio': 'Convertible',
+  'suv': 'SUV',
+  'van': 'Van',
+  'unbeschädigtes fahrzeug': 'Undamaged vehicle',
+  'unfallauto': 'Accident vehicle',
+  'vollleder': 'Full leather',
+  'teilleder': 'Partial leather',
+  'stoff': 'Fabric',
+}
+
+function lookupValue(raw: string): string | null {
+  return GERMAN_VALUE_MAP[raw.toLowerCase().trim()] ?? null
+}
 
 function isAdminAuthed(req: NextRequest): boolean {
   const session = req.cookies.get('admin_session')?.value
@@ -400,10 +425,17 @@ export async function POST(req: NextRequest) {
   // ── Extract technical specs ────────────────────────────────────────────────
   const rawSpecs = extractRawSpecs(root)
 
-  // Separate translatable string values from non-translatable ones
+  // Pre-translate known values via lookup table; send the rest to Claude
+  const lookupTranslated: Record<string, string> = {}
   const specsToTranslate: Record<string, string> = {}
   for (const field of TRANSLATABLE_SPEC_FIELDS) {
-    if (rawSpecs[field]) specsToTranslate[field] = rawSpecs[field]
+    if (!rawSpecs[field]) continue
+    const hit = lookupValue(rawSpecs[field])
+    if (hit) {
+      lookupTranslated[field] = hit
+    } else {
+      specsToTranslate[field] = rawSpecs[field]
+    }
   }
 
   // ── Translate + upload photos in parallel ──────────────────────────────────
@@ -411,6 +443,9 @@ export async function POST(req: NextRequest) {
     translateContent(rawDescription, specsToTranslate),
     uploadPhotosToSupabase(rawPhotoUrls),
   ])
+
+  // Lookup results take priority; Claude fills in anything not in the table
+  const allTranslatedSpecs = { ...lookupTranslated, ...translatedSpecs }
 
   // ── Assemble response ──────────────────────────────────────────────────────
   return NextResponse.json({
@@ -429,11 +464,11 @@ export async function POST(req: NextRequest) {
     doors: rawSpecs.doors ? parseDoors(rawSpecs.doors) : null,
     // String specs — keep non-translatable ones as-is, use translated versions for the rest
     first_registration: rawSpecs.first_registration ?? null,
-    condition: translatedSpecs.condition ?? null,
-    fuel_type: translatedSpecs.fuel_type ?? null,
-    transmission: translatedSpecs.transmission ?? null,
-    body_type: translatedSpecs.body_type ?? null,
-    exterior_color: translatedSpecs.exterior_color ?? null,
-    interior_material: translatedSpecs.interior_material ?? null,
+    condition: allTranslatedSpecs.condition ?? null,
+    fuel_type: allTranslatedSpecs.fuel_type ?? null,
+    transmission: allTranslatedSpecs.transmission ?? null,
+    body_type: allTranslatedSpecs.body_type ?? null,
+    exterior_color: allTranslatedSpecs.exterior_color ?? null,
+    interior_material: allTranslatedSpecs.interior_material ?? null,
   })
 }

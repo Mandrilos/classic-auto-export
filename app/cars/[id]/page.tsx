@@ -44,26 +44,53 @@ export default async function CarDetailPage({ params }: { params: { id: string }
           <span className="text-[#777] truncate max-w-xs">{car.title}</span>
         </nav>
 
+        {/* Title header — full width above the grid */}
+        <div className="mb-8">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs font-semibold text-gold-400 uppercase tracking-widest">{car.brand}</span>
+            <span className="text-[#333]">·</span>
+            <span className="text-xs text-[#555]">{car.year}</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#e8e8e8] leading-tight">
+            {car.title}
+          </h1>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
-          {/* Left: gallery */}
-          <div className="lg:col-span-3">
+          {/* Left: gallery → description → destinations */}
+          <div className="lg:col-span-3 space-y-8">
             <ImageGallery photos={car.photos ?? []} title={car.title} />
+
+            {car.description && (
+              <div>
+                <h2 className="text-lg font-semibold text-[#e8e8e8] mb-4">About This Vehicle</h2>
+                <div className="card p-6">
+                  <p className="text-[#888] leading-relaxed whitespace-pre-wrap text-sm sm:text-base">
+                    {car.description}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {car.destination_countries?.length > 0 && (
+              <div className="card p-5 space-y-3">
+                <h2 className="text-xs font-semibold text-[#666] uppercase tracking-wider">Export Destinations</h2>
+                <div className="flex flex-wrap gap-1.5">
+                  {car.destination_countries.map((country) => (
+                    <span
+                      key={country}
+                      className="text-xs bg-[#1e1e1e] border border-[#2a2a2a] text-[#888] px-2.5 py-1 rounded"
+                    >
+                      {country}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Right: details */}
+          {/* Right: price → specs → inquiry */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Header */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-semibold text-gold-400 uppercase tracking-widest">{car.brand}</span>
-                <span className="text-[#333]">·</span>
-                <span className="text-xs text-[#555]">{car.year}</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#e8e8e8] leading-tight">
-                {car.title}
-              </h1>
-            </div>
-
             {/* Price */}
             <div className="card p-5">
               <p className="text-xs text-[#555] uppercase tracking-wider mb-1">Asking Price</p>
@@ -104,23 +131,6 @@ export default async function CarDetailPage({ params }: { params: { id: string }
               </div>
             </div>
 
-            {/* Destinations */}
-            {car.destination_countries?.length > 0 && (
-              <div className="card p-5 space-y-3">
-                <h2 className="text-xs font-semibold text-[#666] uppercase tracking-wider">Export Destinations</h2>
-                <div className="flex flex-wrap gap-1.5">
-                  {car.destination_countries.map((country) => (
-                    <span
-                      key={country}
-                      className="text-xs bg-[#1e1e1e] border border-[#2a2a2a] text-[#888] px-2.5 py-1 rounded"
-                    >
-                      {country}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* CTA */}
             <a
               href={`mailto:germanclassics.export@gmail.com?subject=${encodeURIComponent(`Inquiry about: ${car.title}`)}&body=${encodeURIComponent(`Hello,\n\nI am interested in the ${car.title} listed at €${car.price.toLocaleString()}.\n\nPlease provide more information.\n\nThank you`)}`}
@@ -137,18 +147,6 @@ export default async function CarDetailPage({ params }: { params: { id: string }
             </p>
           </div>
         </div>
-
-        {/* Description */}
-        {car.description && (
-          <div className="mt-12 max-w-3xl">
-            <h2 className="text-lg font-semibold text-[#e8e8e8] mb-4">About This Vehicle</h2>
-            <div className="card p-6">
-              <p className="text-[#888] leading-relaxed whitespace-pre-wrap text-sm sm:text-base">
-                {car.description}
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* Back link */}
         <div className="mt-12">
