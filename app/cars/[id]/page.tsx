@@ -80,6 +80,26 @@ export default async function CarDetailPage({ params }: { params: { id: string }
                 <SpecRow label="Brand" value={car.brand} />
                 <SpecRow label="Model" value={car.model} />
                 <SpecRow label="Year" value={car.year.toString()} />
+                {car.first_registration && (
+                  <SpecRow label="First Registration" value={car.first_registration} />
+                )}
+                {car.mileage != null && (
+                  <SpecRow label="Mileage" value={`${car.mileage.toLocaleString()} km`} />
+                )}
+                {car.fuel_type && <SpecRow label="Fuel Type" value={car.fuel_type} />}
+                {car.power_hp != null && (
+                  <SpecRow label="Power" value={`${car.power_hp} HP`} />
+                )}
+                {car.transmission && <SpecRow label="Transmission" value={car.transmission} />}
+                {car.body_type && <SpecRow label="Body Type" value={car.body_type} />}
+                {car.doors != null && (
+                  <SpecRow label="Doors" value={car.doors.toString()} />
+                )}
+                {car.exterior_color && <SpecRow label="Exterior Color" value={car.exterior_color} />}
+                {car.interior_material && (
+                  <SpecRow label="Interior" value={car.interior_material} />
+                )}
+                {car.condition && <SpecRow label="Condition" value={car.condition} />}
                 <SpecRow label="Photos" value={`${car.photos?.length ?? 0} available`} />
               </div>
             </div>

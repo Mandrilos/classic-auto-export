@@ -10,6 +10,37 @@ interface ScrapedData {
   description: string
   photos: string[]
   source_url: string
+  brand: string
+  model: string
+  mileage: number | null
+  condition: string | null
+  first_registration: string | null
+  fuel_type: string | null
+  power_hp: number | null
+  transmission: string | null
+  body_type: string | null
+  doors: number | null
+  exterior_color: string | null
+  interior_material: string | null
+}
+
+type SpecEntry = { label: string; value: string | number | null }
+
+function buildSpecEntries(data: ScrapedData): SpecEntry[] {
+  return [
+    { label: 'Brand', value: data.brand || null },
+    { label: 'Model', value: data.model || null },
+    { label: 'Mileage', value: data.mileage != null ? `${data.mileage.toLocaleString()} km` : null },
+    { label: 'First Reg.', value: data.first_registration },
+    { label: 'Fuel', value: data.fuel_type },
+    { label: 'Power', value: data.power_hp != null ? `${data.power_hp} HP` : null },
+    { label: 'Gearbox', value: data.transmission },
+    { label: 'Body', value: data.body_type },
+    { label: 'Doors', value: data.doors },
+    { label: 'Color', value: data.exterior_color },
+    { label: 'Interior', value: data.interior_material },
+    { label: 'Condition', value: data.condition },
+  ].filter((e) => e.value != null && e.value !== '')
 }
 
 export default function KleinanzeigenImport() {
@@ -46,11 +77,11 @@ export default function KleinanzeigenImport() {
     if (!data) return
     try {
       sessionStorage.setItem('kleinanzeigen_import', JSON.stringify(data))
-    } catch {
-      // sessionStorage not available — proceed without pre-fill
-    }
+    } catch { /* sessionStorage unavailable */ }
     router.push('/admin/cars/new?from=import')
   }
+
+  const specEntries = data ? buildSpecEntries(data) : []
 
   return (
     <div className="card p-6 mb-6">
@@ -83,13 +114,11 @@ export default function KleinanzeigenImport() {
         </button>
       </div>
 
-      {error && (
-        <p className="text-red-400 text-sm mt-3">{error}</p>
-      )}
+      {error && <p className="text-red-400 text-sm mt-3">{error}</p>}
 
       {data && (
         <div className="mt-5 border-t border-[#2a2a2a] pt-5 space-y-4">
-          {/* Data summary */}
+          {/* Main fields */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-[#111] border border-[#2a2a2a] rounded p-3">
               <p className="text-xs text-[#555] mb-1">Title</p>
@@ -106,6 +135,21 @@ export default function KleinanzeigenImport() {
               <p className="text-sm text-[#e8e8e8] font-medium">{data.year || '—'}</p>
             </div>
           </div>
+
+          {/* Technical specs grid */}
+          {specEntries.length > 0 && (
+            <div className="bg-[#111] border border-[#2a2a2a] rounded p-3">
+              <p className="text-xs text-[#555] mb-2">Technical Details</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5">
+                {specEntries.map(({ label, value }) => (
+                  <div key={label} className="flex items-baseline gap-1.5 min-w-0">
+                    <span className="text-xs text-[#444] flex-shrink-0">{label}:</span>
+                    <span className="text-xs text-[#aaa] truncate">{String(value)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {data.description && (
             <div className="bg-[#111] border border-[#2a2a2a] rounded p-3">
@@ -128,9 +172,7 @@ export default function KleinanzeigenImport() {
                     src={src}
                     alt={`Photo ${i + 1}`}
                     className="w-24 h-16 object-cover rounded border border-[#2a2a2a] flex-shrink-0"
-                    onError={(e) => {
-                      ;(e.currentTarget as HTMLImageElement).style.display = 'none'
-                    }}
+                    onError={(e) => { ;(e.currentTarget as HTMLImageElement).style.display = 'none' }}
                   />
                 ))}
               </div>
@@ -138,7 +180,6 @@ export default function KleinanzeigenImport() {
           ) : (
             <p className="text-xs text-[#555]">No photos found — you can upload them manually in the form.</p>
           )}
-
 
           <button onClick={handleCreateListing} className="btn-gold">
             Create Listing from Import →

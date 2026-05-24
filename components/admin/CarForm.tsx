@@ -30,6 +30,16 @@ export default function CarForm({ car, mode, initialData }: CarFormProps) {
     destination_countries: car?.destination_countries ?? initialData?.destination_countries ?? [],
     photos: car?.photos ?? initialData?.photos ?? [],
     source_url: car?.source_url ?? initialData?.source_url ?? null,
+    mileage: car?.mileage ?? initialData?.mileage ?? null,
+    condition: car?.condition ?? initialData?.condition ?? null,
+    first_registration: car?.first_registration ?? initialData?.first_registration ?? null,
+    fuel_type: car?.fuel_type ?? initialData?.fuel_type ?? null,
+    power_hp: car?.power_hp ?? initialData?.power_hp ?? null,
+    transmission: car?.transmission ?? initialData?.transmission ?? null,
+    body_type: car?.body_type ?? initialData?.body_type ?? null,
+    doors: car?.doors ?? initialData?.doors ?? null,
+    exterior_color: car?.exterior_color ?? initialData?.exterior_color ?? null,
+    interior_material: car?.interior_material ?? initialData?.interior_material ?? null,
   })
 
   const setField = <K extends keyof CarInsert>(key: K, value: CarInsert[K]) => {
@@ -182,6 +192,130 @@ export default function CarForm({ car, mode, initialData }: CarFormProps) {
             </div>
           </div>
         )}
+      </section>
+
+      {/* Technical Specifications */}
+      <section className="card p-6 space-y-5">
+        <h2 className="text-sm font-semibold text-[#888] uppercase tracking-wider">Technical Specifications</h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="label">Mileage (km)</label>
+            <input
+              type="number"
+              min={0}
+              value={form.mileage ?? ''}
+              onChange={(e) => setField('mileage', e.target.value ? parseInt(e.target.value) : null)}
+              placeholder="e.g. 85000"
+              className="input-field"
+            />
+          </div>
+          <div>
+            <label className="label">First Registration</label>
+            <input
+              type="text"
+              value={form.first_registration ?? ''}
+              onChange={(e) => setField('first_registration', e.target.value || null)}
+              placeholder="e.g. 03/1987"
+              className="input-field"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="label">Fuel Type</label>
+            <input
+              type="text"
+              value={form.fuel_type ?? ''}
+              onChange={(e) => setField('fuel_type', e.target.value || null)}
+              placeholder="e.g. Petrol"
+              className="input-field"
+            />
+          </div>
+          <div>
+            <label className="label">Power (HP)</label>
+            <input
+              type="number"
+              min={0}
+              value={form.power_hp ?? ''}
+              onChange={(e) => setField('power_hp', e.target.value ? parseInt(e.target.value) : null)}
+              placeholder="e.g. 150"
+              className="input-field"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="label">Transmission</label>
+            <input
+              type="text"
+              value={form.transmission ?? ''}
+              onChange={(e) => setField('transmission', e.target.value || null)}
+              placeholder="e.g. Manual"
+              className="input-field"
+            />
+          </div>
+          <div>
+            <label className="label">Body Type</label>
+            <input
+              type="text"
+              value={form.body_type ?? ''}
+              onChange={(e) => setField('body_type', e.target.value || null)}
+              placeholder="e.g. Saloon"
+              className="input-field"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="label">Exterior Color</label>
+            <input
+              type="text"
+              value={form.exterior_color ?? ''}
+              onChange={(e) => setField('exterior_color', e.target.value || null)}
+              placeholder="e.g. Silver"
+              className="input-field"
+            />
+          </div>
+          <div>
+            <label className="label">Doors</label>
+            <input
+              type="number"
+              min={1}
+              max={9}
+              value={form.doors ?? ''}
+              onChange={(e) => setField('doors', e.target.value ? parseInt(e.target.value) : null)}
+              placeholder="e.g. 4"
+              className="input-field"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="label">Interior Material</label>
+            <input
+              type="text"
+              value={form.interior_material ?? ''}
+              onChange={(e) => setField('interior_material', e.target.value || null)}
+              placeholder="e.g. Leather"
+              className="input-field"
+            />
+          </div>
+          <div>
+            <label className="label">Condition</label>
+            <input
+              type="text"
+              value={form.condition ?? ''}
+              onChange={(e) => setField('condition', e.target.value || null)}
+              placeholder="e.g. Well-maintained"
+              className="input-field"
+            />
+          </div>
+        </div>
       </section>
 
       {/* Description */}

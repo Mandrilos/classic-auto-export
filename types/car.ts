@@ -9,6 +9,17 @@ export interface Car {
   destination_countries: string[]
   photos: string[]
   source_url: string | null
+  // Technical specs (extracted from listing details table)
+  mileage: number | null
+  condition: string | null
+  first_registration: string | null
+  fuel_type: string | null
+  power_hp: number | null
+  transmission: string | null
+  body_type: string | null
+  doors: number | null
+  exterior_color: string | null
+  interior_material: string | null
   created_at: string
   updated_at: string
 }

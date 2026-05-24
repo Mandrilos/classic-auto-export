@@ -12,6 +12,18 @@ interface ImportedData {
   description: string
   photos: string[]
   source_url: string
+  brand: string
+  model: string
+  mileage: number | null
+  condition: string | null
+  first_registration: string | null
+  fuel_type: string | null
+  power_hp: number | null
+  transmission: string | null
+  body_type: string | null
+  doors: number | null
+  exterior_color: string | null
+  interior_material: string | null
 }
 
 export default function NewCarPage() {
@@ -25,9 +37,7 @@ export default function NewCarPage() {
         setImported(JSON.parse(stored))
         sessionStorage.removeItem('kleinanzeigen_import')
       }
-    } catch {
-      // sessionStorage unavailable or malformed JSON
-    }
+    } catch { /* sessionStorage unavailable or malformed JSON */ }
     setReady(true)
   }, [])
 
@@ -39,6 +49,18 @@ export default function NewCarPage() {
         description: imported.description,
         photos: imported.photos,
         source_url: imported.source_url,
+        brand: imported.brand || undefined,
+        model: imported.model || undefined,
+        mileage: imported.mileage,
+        condition: imported.condition,
+        first_registration: imported.first_registration,
+        fuel_type: imported.fuel_type,
+        power_hp: imported.power_hp,
+        transmission: imported.transmission,
+        body_type: imported.body_type,
+        doors: imported.doors,
+        exterior_color: imported.exterior_color,
+        interior_material: imported.interior_material,
       }
     : undefined
 
