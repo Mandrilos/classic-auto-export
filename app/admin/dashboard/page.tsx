@@ -45,7 +45,12 @@ export default function AdminDashboard() {
         }
       }
 
-      await supabase.from('cars').delete().eq('id', car.id)
+      const res = await fetch(`/api/admin/cars/${car.id}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}))
+        alert(`Delete failed: ${json.error || res.status}`)
+        return
+      }
       setCars((prev) => prev.filter((c) => c.id !== car.id))
     } finally {
       setDeleting(null)

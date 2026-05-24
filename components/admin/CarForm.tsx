@@ -2,7 +2,6 @@
 
 import { useState, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 import { CAR_BRANDS, DESTINATION_COUNTRIES, type Car, type CarInsert } from '@/types/car'
 import ImageUpload from './ImageUpload'
 
@@ -61,19 +60,30 @@ export default function CarForm({ car, mode, initialData }: CarFormProps) {
     setSaving(true)
 
     try {
+      let res: Response
       if (mode === 'create') {
-        const { error: dbError } = await supabase.from('cars').insert([form])
-        if (dbError) throw dbError
-      } else if (car) {
-        const { error: dbError } = await supabase.from('cars').update(form).eq('id', car.id)
-        if (dbError) throw dbError
+        res = await fetch('/api/admin/cars', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(form),
+        })
+      } else {
+        res = await fetch(`/api/admin/cars/${car!.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(form),
+        })
+      }
+
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}))
+        throw new Error(json.error || `Save failed (${res.status})`)
       }
 
       router.push('/admin/dashboard')
       router.refresh()
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to save'
-      setError(message)
+      setError(err instanceof Error ? err.message : 'Failed to save')
     } finally {
       setSaving(false)
     }

@@ -3,7 +3,11 @@
     "allow": [
       "PowerShell(npm run *)",
       "Bash(npm install *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\1\\\\classic-auto-export\\\\app\\\\api\\\\admin\\\\cars\")",
+      "Bash(Out-Null)",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\1\\\\classic-auto-export\\\\app\\\\api\\\\admin\\\\cars\\\\[id]\")",
+      "Bash(Write-Output \"done\")"
     ]
   }
 }
