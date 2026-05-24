@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import type { Car } from '@/types/car'
+import KleinanzeigenImport from '@/components/admin/KleinanzeigenImport'
 
 export default function AdminDashboard() {
   const router = useRouter()
@@ -95,6 +96,9 @@ export default function AdminDashboard() {
         <StatCard label="Brands" value={new Set(cars.map((c) => c.brand)).size} />
         <StatCard label="With Photos" value={cars.filter((c) => c.photos?.length > 0).length} />
       </div>
+
+      {/* Kleinanzeigen import */}
+      <KleinanzeigenImport />
 
       {/* Search */}
       <div className="mb-5">

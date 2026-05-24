@@ -9,25 +9,26 @@ import ImageUpload from './ImageUpload'
 interface CarFormProps {
   car?: Car
   mode: 'create' | 'edit'
+  initialData?: Partial<CarInsert>
 }
 
 const CURRENT_YEAR = new Date().getFullYear()
 const YEARS = Array.from({ length: CURRENT_YEAR - 1900 + 1 }, (_, i) => CURRENT_YEAR - i)
 
-export default function CarForm({ car, mode }: CarFormProps) {
+export default function CarForm({ car, mode, initialData }: CarFormProps) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
   const [form, setForm] = useState<CarInsert>({
-    title: car?.title ?? '',
-    brand: car?.brand ?? '',
-    model: car?.model ?? '',
-    year: car?.year ?? 1970,
-    price: car?.price ?? 0,
-    description: car?.description ?? '',
-    destination_countries: car?.destination_countries ?? [],
-    photos: car?.photos ?? [],
+    title: car?.title ?? initialData?.title ?? '',
+    brand: car?.brand ?? initialData?.brand ?? '',
+    model: car?.model ?? initialData?.model ?? '',
+    year: car?.year ?? initialData?.year ?? 1970,
+    price: car?.price ?? initialData?.price ?? 0,
+    description: car?.description ?? initialData?.description ?? '',
+    destination_countries: car?.destination_countries ?? initialData?.destination_countries ?? [],
+    photos: car?.photos ?? initialData?.photos ?? [],
   })
 
   const setField = <K extends keyof CarInsert>(key: K, value: CarInsert[K]) => {
