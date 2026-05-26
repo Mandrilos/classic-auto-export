@@ -13,6 +13,7 @@ export default function AdminDashboard() {
   const [cars, setCars] = useState<Car[]>([])
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [togglingId, setTogglingId] = useState<string | null>(null)
   const [search, setSearch] = useState('')
 
   const fetchCars = useCallback(async () => {
@@ -26,6 +27,25 @@ export default function AdminDashboard() {
   }, [])
 
   useEffect(() => { fetchCars() }, [fetchCars])
+
+  const handleToggleSold = async (car: Car) => {
+    setTogglingId(car.id)
+    try {
+      const res = await fetch(`/api/admin/cars/${car.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sold: !car.sold }),
+      })
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}))
+        alert(`Failed: ${json.error || res.status}`)
+        return
+      }
+      setCars((prev) => prev.map((c) => c.id === car.id ? { ...c, sold: !car.sold } : c))
+    } finally {
+      setTogglingId(null)
+    }
+  }
 
   const handleDelete = async (car: Car) => {
     if (!confirm(`Delete "${car.title}"? This cannot be undone.`)) return
@@ -187,6 +207,17 @@ export default function AdminDashboard() {
                 >
                   Edit
                 </Link>
+                <button
+                  onClick={() => handleToggleSold(car)}
+                  disabled={togglingId === car.id}
+                  className={`py-1.5 px-3 text-xs rounded border font-medium transition-colors ${
+                    car.sold
+                      ? 'bg-emerald-900/30 border-emerald-700/50 text-emerald-400 hover:bg-emerald-900/50'
+                      : 'bg-transparent border-[#2a2a2a] text-[#666] hover:border-[#444] hover:text-[#999]'
+                  } disabled:opacity-40`}
+                >
+                  {togglingId === car.id ? '...' : car.sold ? 'Mark as Available' : 'Mark as Sold'}
+                </button>
                 <button
                   onClick={() => handleDelete(car)}
                   disabled={deleting === car.id}

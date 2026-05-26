@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import type { Car } from '@/types/car'
+import SoldStamp from '@/components/SoldStamp'
 
 const CONTACT_EMAIL = 'germanclassics.export@gmail.com'
 
@@ -38,6 +39,8 @@ export default function CarCard({ car }: CarCardProps) {
               </svg>
             </div>
           )}
+
+          {car.sold && <SoldStamp />}
 
           {/* Year badge */}
           <div className="absolute top-3 left-3">

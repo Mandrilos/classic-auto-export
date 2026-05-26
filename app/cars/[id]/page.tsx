@@ -59,7 +59,7 @@ export default async function CarDetailPage({ params }: { params: { id: string }
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
           {/* Left: gallery → description → destinations */}
           <div className="lg:col-span-3 space-y-8">
-            <ImageGallery photos={car.photos ?? []} title={car.title} />
+            <ImageGallery photos={car.photos ?? []} title={car.title} sold={car.sold} />
 
             {car.description && (
               <div>

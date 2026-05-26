@@ -20,6 +20,7 @@ export interface Car {
   doors: number | null
   exterior_color: string | null
   interior_material: string | null
+  sold: boolean
   created_at: string
   updated_at: string
 }

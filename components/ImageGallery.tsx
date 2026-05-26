@@ -2,13 +2,15 @@
 
 import { useState, useCallback } from 'react'
 import Image from 'next/image'
+import SoldStamp from '@/components/SoldStamp'
 
 interface ImageGalleryProps {
   photos: string[]
   title: string
+  sold?: boolean
 }
 
-export default function ImageGallery({ photos, title }: ImageGalleryProps) {
+export default function ImageGallery({ photos, title, sold }: ImageGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
 
@@ -43,6 +45,8 @@ export default function ImageGallery({ photos, title }: ImageGalleryProps) {
           sizes="(max-width: 768px) 100vw, 60vw"
           priority={activeIndex === 0}
         />
+
+        {sold && <SoldStamp />}
 
         {/* Nav arrows */}
         {photos.length > 1 && (

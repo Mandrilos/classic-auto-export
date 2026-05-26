@@ -39,6 +39,7 @@ export default function CarForm({ car, mode, initialData }: CarFormProps) {
     doors: car?.doors ?? initialData?.doors ?? null,
     exterior_color: car?.exterior_color ?? initialData?.exterior_color ?? null,
     interior_material: car?.interior_material ?? initialData?.interior_material ?? null,
+    sold: car?.sold ?? false,
   })
 
   const setField = <K extends keyof CarInsert>(key: K, value: CarInsert[K]) => {
