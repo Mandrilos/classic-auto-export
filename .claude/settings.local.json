@@ -7,7 +7,9 @@
       "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\1\\\\classic-auto-export\\\\app\\\\api\\\\admin\\\\cars\")",
       "Bash(Out-Null)",
       "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\1\\\\classic-auto-export\\\\app\\\\api\\\\admin\\\\cars\\\\[id]\")",
-      "Bash(Write-Output \"done\")"
+      "Bash(Write-Output \"done\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\1\\\\classic-auto-export\" -Recurse -Force)",
+      "Bash(Select-Object -ExpandProperty FullName)"
     ]
   }
 }
