@@ -31,7 +31,7 @@ export default function Navbar() {
             <Link href="/" className="text-sm text-[#888] hover:text-[#e8e8e8] transition-colors">
               Catalog
             </Link>
-            <a href="mailto:germanclassics.export@gmail.com" className="text-sm text-[#888] hover:text-[#e8e8e8] transition-colors">
+            <a href="mailto:germancalssics.export@gmail.com" className="text-sm text-[#888] hover:text-[#e8e8e8] transition-colors">
               Contact
             </a>
           </nav>
@@ -65,7 +65,7 @@ export default function Navbar() {
               Catalog
             </Link>
             <a
-              href="mailto:germanclassics.export@gmail.com"
+              href="mailto:germancalssics.export@gmail.com"
               className="block px-2 py-2 text-sm text-[#888] hover:text-[#e8e8e8]"
               onClick={() => setMenuOpen(false)}
             >

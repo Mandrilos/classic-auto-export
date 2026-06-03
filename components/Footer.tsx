@@ -24,7 +24,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="mailto:germanclassics.export@gmail.com" className="text-sm text-[#555] hover:text-gold-400 transition-colors">
+                <a href="mailto:germancalssics.export@gmail.com" className="text-sm text-[#555] hover:text-gold-400 transition-colors">
                   Contact Us
                 </a>
               </li>
@@ -36,8 +36,8 @@ export default function Footer() {
             <h3 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-3">Contact</h3>
             <ul className="space-y-2">
               <li className="text-sm text-[#555]">
-                <a href="mailto:germanclassics.export@gmail.com" className="hover:text-gold-400 transition-colors">
-                  germanclassics.export@gmail.com
+                <a href="mailto:germancalssics.export@gmail.com" className="hover:text-gold-400 transition-colors">
+                  germancalssics.export@gmail.com
                 </a>
               </li>
               <li className="text-sm text-[#555]">International buyers welcome</li>

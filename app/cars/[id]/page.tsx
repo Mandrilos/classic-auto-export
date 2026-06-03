@@ -133,7 +133,7 @@ export default async function CarDetailPage({ params }: { params: { id: string }
 
             {/* CTA */}
             <a
-              href={`mailto:germanclassics.export@gmail.com?subject=${encodeURIComponent(`Inquiry about: ${car.title}`)}&body=${encodeURIComponent(`Hello,\n\nI am interested in the ${car.title} listed at €${car.price.toLocaleString()}.\n\nPlease provide more information.\n\nThank you`)}`}
+              href={`mailto:germancalssics.export@gmail.com?subject=${encodeURIComponent(`Inquiry about: ${car.title}`)}&body=${encodeURIComponent(`Hello,\n\nI am interested in the ${car.title} listed at €${car.price.toLocaleString()}.\n\nPlease provide more information.\n\nThank you`)}`}
               className="btn-gold w-full flex items-center justify-center gap-2 py-3 text-base"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

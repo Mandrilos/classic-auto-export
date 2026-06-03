@@ -7,7 +7,7 @@ import Image from 'next/image'
 import type { Car } from '@/types/car'
 import SoldStamp from '@/components/SoldStamp'
 
-const CONTACT_EMAIL = 'germanclassics.export@gmail.com'
+const CONTACT_EMAIL = 'germancalssics.export@gmail.com'
 
 interface CarCardProps {
   car: Car
